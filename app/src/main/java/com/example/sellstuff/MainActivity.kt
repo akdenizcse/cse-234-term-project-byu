@@ -47,7 +47,7 @@ fun FirestoreExample() {
         TextField(
             value = inputText,
             onValueChange = { inputText = it },
-            label = { Text("Enter Text") }
+            label = { Text("Enter Text to add product Firebase") }
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
