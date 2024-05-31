@@ -5,7 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -44,11 +48,14 @@ fun MainScreen() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "firestore",
+            startDestination = "home",
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable("firestore") { FirestoreExample() }
-            composable("dummy") { DummyScreen() }
+            composable("home") { FirestoreExample() }
+            composable("messages") { MessageScreen() }
+            composable("add"){ AddScreen()}
+            composable("history"){ HistoryScreen()}
+            composable("profile"){ ProfileScreen()}
         }
     }
 }
@@ -57,15 +64,20 @@ fun MainScreen() {
 fun BottomNavigationBar(navController: NavHostController) {
     NavigationBar {
         val items = listOf(
-            BottomNavItem("Firestore", "firestore"),
-            BottomNavItem("Dummy", "dummy")
+            BottomNavItem(title = "Homepage", route = "home", icon = Icons.Default.Home),
+            BottomNavItem(title = "Messages", route = "messages", icon = Icons.Default.Notifications),
+            BottomNavItem(title = "Add", route = "add", icon = Icons.Default.Add),
+            BottomNavItem(title = "History", route = "history", icon = Icons.Default.List),
+            BottomNavItem(title = "Profile", route = "profile", icon = Icons.Default.AccountCircle)
+
+
         )
 
         val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
         items.forEach { item ->
             NavigationBarItem(
-                icon = { Icon(item.icon, contentDescription = null) },
+                icon = { Icon(item.icon, contentDescription = item.title) },
                 label = { Text(item.title) },
                 selected = currentRoute == item.route,
                 onClick = {
@@ -136,7 +148,7 @@ fun FirestoreExample() {
 }
 
 @Composable
-fun DummyScreen() {
+fun ProfileScreen() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -144,7 +156,7 @@ fun DummyScreen() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("This is a dummy screen.")
+        Text("This is your profile.")
     }
 }
 
@@ -161,5 +173,42 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 fun GreetingPreview() {
     SellStuffTheme {
         Greeting("Android")
+    }
+}
+@Composable
+fun MessageScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("This is chat screen")
+    }
+}
+@Composable
+fun AddScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("This is uploading screen.")
+    }
+}
+
+@Composable
+fun HistoryScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("This is history screen.")
     }
 }
