@@ -18,7 +18,10 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
     var password by remember { mutableStateOf("") }
 
     val errorMessage by authViewModel.errorMessage.collectAsState()
-    
+
+    LaunchedEffect(Unit) {
+        authViewModel.clearErrorMessage()
+    }
 
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         TextField(
@@ -54,6 +57,10 @@ fun SignupScreen(navController: NavController, authViewModel: AuthViewModel) {
     var password by remember { mutableStateOf("") }
 
     val errorMessage by authViewModel.errorMessage.collectAsState()
+
+    LaunchedEffect(Unit) {
+        authViewModel.clearErrorMessage()
+    }
 
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         TextField(

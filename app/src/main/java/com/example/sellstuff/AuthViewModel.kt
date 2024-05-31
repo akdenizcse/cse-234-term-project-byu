@@ -42,6 +42,10 @@ class AuthViewModel : ViewModel() {
             }
     }
 
+    fun clearErrorMessage() {
+        _errorMessage.value = null
+    }
+
     fun logout() {
         auth.signOut()
         _user.value = null
