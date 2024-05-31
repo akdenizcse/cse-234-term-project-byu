@@ -3,6 +3,7 @@ package com.example.sellstuff
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+<<<<<<< HEAD
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -13,15 +14,13 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+=======
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+>>>>>>> 4bfd2d6be761ed1fabbd797cdcd683b801237744
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.*
-import androidx.navigation.compose.rememberNavController
 import com.example.sellstuff.ui.theme.SellStuffTheme
-import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +37,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+<<<<<<< HEAD
 
 @Composable
 fun MainScreen() {
@@ -212,3 +212,5 @@ fun HistoryScreen() {
         Text("This is history screen.")
     }
 }
+=======
+>>>>>>> 4bfd2d6be761ed1fabbd797cdcd683b801237744
