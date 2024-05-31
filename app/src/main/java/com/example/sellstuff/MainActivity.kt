@@ -4,18 +4,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.*
+import androidx.navigation.compose.rememberNavController
 import com.example.sellstuff.ui.theme.SellStuffTheme
 import com.google.firebase.firestore.FirebaseFirestore
-import androidx.compose.ui.unit.dp
-
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,12 +28,61 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    FirestoreExample()
+                    MainScreen()
                 }
             }
         }
     }
 }
+
+@Composable
+fun MainScreen() {
+    val navController = rememberNavController()
+
+    Scaffold(
+        bottomBar = { BottomNavigationBar(navController) }
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = "firestore",
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable("firestore") { FirestoreExample() }
+            composable("dummy") { DummyScreen() }
+        }
+    }
+}
+
+@Composable
+fun BottomNavigationBar(navController: NavHostController) {
+    NavigationBar {
+        val items = listOf(
+            BottomNavItem("Firestore", "firestore"),
+            BottomNavItem("Dummy", "dummy")
+        )
+
+        val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+
+        items.forEach { item ->
+            NavigationBarItem(
+                icon = { Icon(item.icon, contentDescription = null) },
+                label = { Text(item.title) },
+                selected = currentRoute == item.route,
+                onClick = {
+                    if (currentRoute != item.route) {
+                        navController.navigate(item.route) {
+                            popUpTo(navController.graph.startDestinationId) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                }
+            )
+        }
+    }
+}
+
+data class BottomNavItem(val title: String, val route: String, val icon: ImageVector = Icons.Default.Home)
 
 @Composable
 fun FirestoreExample() {
@@ -81,6 +132,19 @@ fun FirestoreExample() {
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = text)
+    }
+}
+
+@Composable
+fun DummyScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("This is a dummy screen.")
     }
 }
 
