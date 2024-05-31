@@ -3,7 +3,6 @@ package com.example.sellstuff
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-<<<<<<< HEAD
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -14,12 +13,16 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-=======
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
->>>>>>> 4bfd2d6be761ed1fabbd797cdcd683b801237744
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.sellstuff.ui.theme.SellStuffTheme
 
 class MainActivity : ComponentActivity() {
@@ -37,7 +40,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-<<<<<<< HEAD
 
 @Composable
 fun MainScreen() {
@@ -94,59 +96,6 @@ fun BottomNavigationBar(navController: NavHostController) {
     }
 }
 
-data class BottomNavItem(val title: String, val route: String, val icon: ImageVector = Icons.Default.Home)
-
-@Composable
-fun FirestoreExample() {
-    var inputText by remember { mutableStateOf("") }
-    var text by remember { mutableStateOf("Loading...") }
-    val db = FirebaseFirestore.getInstance()
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        TextField(
-            value = inputText,
-            onValueChange = { inputText = it },
-            label = { Text("Enter Text to add product Firebase") }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {
-                // Upload data to Firestore
-                db.collection("exampleCollection")
-                    .document("exampleDocument")
-                    .set(mapOf("exampleField" to inputText))
-                    .addOnSuccessListener {
-                        // Fetch data from Firestore
-                        db.collection("exampleCollection")
-                            .document("exampleDocument")
-                            .get()
-                            .addOnSuccessListener { document ->
-                                if (document != null) {
-                                    text = document.getString("exampleField") ?: "No Data"
-                                } else {
-                                    text = "No Document Found"
-                                }
-                            }
-                            .addOnFailureListener { exception ->
-                                text = "Error: ${exception.message}"
-                            }
-                    }
-                    .addOnFailureListener { exception ->
-                        text = "Error: ${exception.message}"
-                    }
-            }
-        ) {
-            Text("Upload & Fetch")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = text)
-    }
-}
-
 @Composable
 fun ProfileScreen() {
     Column(
@@ -160,21 +109,6 @@ fun ProfileScreen() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SellStuffTheme {
-        Greeting("Android")
-    }
-}
 @Composable
 fun MessageScreen() {
     Column(
@@ -212,5 +146,3 @@ fun HistoryScreen() {
         Text("This is history screen.")
     }
 }
-=======
->>>>>>> 4bfd2d6be761ed1fabbd797cdcd683b801237744

@@ -14,18 +14,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import com.example.sellstuff.ui.theme.SellStuffTheme
 
-@Composable
-fun MainScreen() {
-    val navController = rememberNavController()
-    val authViewModel: AuthViewModel = viewModel()
-    val user by authViewModel.user.collectAsState()
-
-    if (user == null) {
-        AuthNavHost(navController = navController, authViewModel = authViewModel)
-    } else {
-        AppNavHost(navController = navController, authViewModel = authViewModel)
-    }
-}
 
 @Composable
 fun AuthNavHost(navController: NavHostController, authViewModel: AuthViewModel) {
@@ -48,30 +36,6 @@ fun AppNavHost(navController: NavHostController, authViewModel: AuthViewModel) {
             composable("firestore") { FirestoreExample() }
             composable("dummy") { DummyScreen() }
             composable("profile") { ProfileScreen(authViewModel) }
-        }
-    }
-}
-
-@Composable
-fun BottomNavigationBar(navController: NavHostController) {
-    NavigationBar {
-        val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-
-        bottomNavItems.forEach { item ->
-            NavigationBarItem(
-                icon = { Icon(item.icon, contentDescription = null) },
-                label = { Text(item.title) },
-                selected = currentRoute == item.route,
-                onClick = {
-                    if (currentRoute != item.route) {
-                        navController.navigate(item.route) {
-                            popUpTo(navController.graph.startDestinationId) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                }
-            )
         }
     }
 }
