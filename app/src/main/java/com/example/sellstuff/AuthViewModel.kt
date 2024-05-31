@@ -11,6 +11,9 @@ class AuthViewModel : ViewModel() {
     private val _user = MutableStateFlow(auth.currentUser)
     val user: StateFlow<FirebaseUser?> = _user
 
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage
+
     init {
         auth.addAuthStateListener {
             _user.value = it.currentUser
@@ -23,7 +26,7 @@ class AuthViewModel : ViewModel() {
                 if (task.isSuccessful) {
                     _user.value = auth.currentUser
                 } else {
-                    // Handle login failure
+                    _errorMessage.value = task.exception?.message ?: "Login failed"
                 }
             }
     }
@@ -34,7 +37,7 @@ class AuthViewModel : ViewModel() {
                 if (task.isSuccessful) {
                     _user.value = auth.currentUser
                 } else {
-                    // Handle signup failure
+                    _errorMessage.value = task.exception?.message ?: "Sign up failed"
                 }
             }
     }

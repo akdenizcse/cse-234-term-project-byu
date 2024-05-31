@@ -7,6 +7,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -15,6 +16,9 @@ import androidx.navigation.NavController
 fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val errorMessage by authViewModel.errorMessage.collectAsState()
+    
 
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         TextField(
@@ -34,7 +38,12 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
             Text("Login")
         }
         TextButton(onClick = { navController.navigate("signup") }) {
+
             Text("Don't have an account? Sign up")
+        }
+
+        errorMessage?.let {
+            Text(text = it, color = Color.Red)
         }
     }
 }
@@ -43,6 +52,8 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
 fun SignupScreen(navController: NavController, authViewModel: AuthViewModel) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val errorMessage by authViewModel.errorMessage.collectAsState()
 
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         TextField(
@@ -63,6 +74,10 @@ fun SignupScreen(navController: NavController, authViewModel: AuthViewModel) {
         }
         TextButton(onClick = { navController.navigate("login") }) {
             Text("Already have an account? Login")
+        }
+
+        errorMessage?.let {
+            Text(text = it, color = Color.Red)
         }
     }
 }
