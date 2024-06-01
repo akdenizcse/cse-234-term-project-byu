@@ -1,20 +1,23 @@
-package com.example.sellstuff
-
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun FirestoreExample() {
-    var inputText by remember { mutableStateOf("") }
-    var text by remember { mutableStateOf("Loading...") }
+    var inputText by remember { mutableStateOf(TextFieldValue()) }
     val db = FirebaseFirestore.getInstance()
+    val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -29,32 +32,35 @@ fun FirestoreExample() {
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
+                focusManager.clearFocus()
                 db.collection("exampleCollection")
                     .document("exampleDocument")
-                    .set(mapOf("exampleField" to inputText))
-                    .addOnSuccessListener {
+                    .get()
+                    .addOnSuccessListener { document ->
+                        val currentList = document?.get("exampleField") as? ArrayList<String> ?: arrayListOf()
+                        currentList.add(inputText.text)
+                        val data = hashMapOf(
+                            "exampleField" to currentList
+                        )
                         db.collection("exampleCollection")
                             .document("exampleDocument")
-                            .get()
-                            .addOnSuccessListener { document ->
-                                if (document != null) {
-                                    text = document.getString("exampleField") ?: "No Data"
-                                } else {
-                                    text = "No Document Found"
+                            .set(data)
+                            .addOnSuccessListener {
+                                // Show toast message
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    Toast.makeText(context, "Upload successful", Toast.LENGTH_SHORT).show()
                                 }
                             }
                             .addOnFailureListener { exception ->
-                                text = "Error: ${exception.message}"
+                                // Handle error
                             }
                     }
                     .addOnFailureListener { exception ->
-                        text = "Error: ${exception.message}"
+                        // Handle error
                     }
             }
         ) {
-            Text("Upload & Fetch")
+            Text("Upload")
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = text)
     }
 }
