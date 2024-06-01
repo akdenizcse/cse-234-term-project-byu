@@ -1,18 +1,26 @@
 package com.example.sellstuff
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
@@ -86,8 +94,59 @@ data class BottomNavItem(val title: String, val route: String, val icon: ImageVe
 
 val bottomNavItems = listOf(
     BottomNavItem(title = "Homepage", route = "home", icon = Icons.Default.Home),
-    BottomNavItem(title = "Messages", route = "messages", icon = Icons.Default.Notifications),
+    BottomNavItem(title = "Messages", route = "messages", icon = Icons.Default.Send),
     BottomNavItem(title = "Add", route = "add", icon = Icons.Default.Add),
-    BottomNavItem(title = "History", route = "history", icon = Icons.Default.List),
+    BottomNavItem(title = "History", route = "history", icon = Icons.Default.Done),
     BottomNavItem(title = "Profile", route = "profile", icon = Icons.Default.AccountCircle)
 )
+
+@Composable
+fun ProfileScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("This is your profile.")
+    }
+}
+
+@Composable
+fun MessageScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("This is chat screen")
+    }
+}
+@Composable
+fun AddScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("This is uploading screen.")
+    }
+}
+
+@Composable
+fun HistoryScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("This is history screen.")
+    }
+}
