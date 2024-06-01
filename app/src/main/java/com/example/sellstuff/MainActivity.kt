@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -37,61 +38,6 @@ class MainActivity : ComponentActivity() {
                     MainScreen()
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun MainScreen() {
-    val navController = rememberNavController()
-
-    Scaffold(
-        bottomBar = { BottomNavigationBar(navController) }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = "home",
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            composable("home") { FirestoreExample() }
-            composable("messages") { MessageScreen() }
-            composable("add"){ AddScreen()}
-            composable("history"){ HistoryScreen()}
-            composable("profile"){ ProfileScreen()}
-        }
-    }
-}
-
-@Composable
-fun BottomNavigationBar(navController: NavHostController) {
-    NavigationBar {
-        val items = listOf(
-            BottomNavItem(title = "Homepage", route = "home", icon = Icons.Default.Home),
-            BottomNavItem(title = "Messages", route = "messages", icon = Icons.Default.Notifications),
-            BottomNavItem(title = "Add", route = "add", icon = Icons.Default.Add),
-            BottomNavItem(title = "History", route = "history", icon = Icons.Default.List),
-            BottomNavItem(title = "Profile", route = "profile", icon = Icons.Default.AccountCircle)
-
-
-        )
-
-        val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-
-        items.forEach { item ->
-            NavigationBarItem(
-                icon = { Icon(item.icon, contentDescription = item.title) },
-                label = { Text(item.title) },
-                selected = currentRoute == item.route,
-                onClick = {
-                    if (currentRoute != item.route) {
-                        navController.navigate(item.route) {
-                            popUpTo(navController.graph.startDestinationId) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                }
-            )
         }
     }
 }

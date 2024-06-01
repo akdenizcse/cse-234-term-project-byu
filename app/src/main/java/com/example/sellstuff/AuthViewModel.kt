@@ -50,4 +50,8 @@ class AuthViewModel : ViewModel() {
         auth.signOut()
         _user.value = null
     }
+
+    fun setError(errorMessage: String?) {
+        _errorMessage.value = errorMessage
+    }
 }

@@ -37,11 +37,20 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
-        Button(onClick = { authViewModel.login(email, password) }) {
+        Button(
+            onClick = {
+                if (email.isNotEmpty() && password.isNotEmpty()) {
+                    authViewModel.login(email, password)
+                } else {
+                    // Show error message for empty fields
+                    authViewModel.clearErrorMessage()
+                    authViewModel.setError( "Please enter email and password.")
+                }
+            }
+        ) {
             Text("Login")
         }
         TextButton(onClick = { navController.navigate("signup") }) {
-
             Text("Don't have an account? Sign up")
         }
 
@@ -76,7 +85,17 @@ fun SignupScreen(navController: NavController, authViewModel: AuthViewModel) {
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
-        Button(onClick = { authViewModel.signup(email, password) }) {
+        Button(
+            onClick = {
+                if (email.isNotEmpty() && password.isNotEmpty()) {
+                    authViewModel.signup(email, password)
+                } else {
+                    // Show error message for empty fields
+                    authViewModel.clearErrorMessage()
+                    authViewModel.setError("Please enter email and password.")
+                }
+            }
+        ) {
             Text("Sign Up")
         }
         TextButton(onClick = { navController.navigate("login") }) {
