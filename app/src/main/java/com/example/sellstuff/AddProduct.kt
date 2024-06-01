@@ -58,16 +58,3 @@ fun FirestoreExample() {
         Text(text = text)
     }
 }
-
-@Composable
-fun DummyScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("This is a dummy screen.")
-    }
-}
