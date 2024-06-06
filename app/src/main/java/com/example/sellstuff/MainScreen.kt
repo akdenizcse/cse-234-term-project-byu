@@ -26,12 +26,13 @@ import androidx.navigation.compose.*
 fun MainScreen() {
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = viewModel()
+    val messagingViewModel: MessagingViewModel = viewModel()
     val user by authViewModel.user.collectAsState()
 
     if (user == null) {
         AuthNavHost(navController = navController, authViewModel = authViewModel)
     } else {
-        AppNavHost(navController = navController, authViewModel = authViewModel)
+        AppNavHost(navController = navController, authViewModel = authViewModel, messagingViewModel = messagingViewModel)
     }
 }
 
@@ -44,7 +45,7 @@ fun AuthNavHost(navController: NavHostController, authViewModel: AuthViewModel) 
 }
 
 @Composable
-fun AppNavHost(navController: NavHostController, authViewModel: AuthViewModel) {
+fun AppNavHost(navController: NavHostController, authViewModel: AuthViewModel, messagingViewModel: MessagingViewModel) {
     Scaffold(
         bottomBar = { BottomNavigationBar(navController) }
     ) { innerPadding ->
@@ -54,7 +55,7 @@ fun AppNavHost(navController: NavHostController, authViewModel: AuthViewModel) {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable("home") { HomeScreen() }
-            composable("messages") { MessageScreen() }
+            composable("messages") { MessagingScreen(messagingViewModel) }
             composable("add") { FirestoreExample()}
             composable("history") { HistoryScreen()}
             composable("profile") { ProfileScreen(authViewModel) }
