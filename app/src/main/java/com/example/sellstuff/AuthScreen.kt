@@ -189,51 +189,192 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
 @Composable
 fun SignupScreen(navController: NavController, authViewModel: AuthViewModel) {
     var email by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var passwordCheck by remember { mutableStateOf("") }
+
 
     val errorMessage by authViewModel.errorMessage.collectAsState()
 
     LaunchedEffect(Unit) {
         authViewModel.clearErrorMessage()
     }
-
-    Column(
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+            .fillMaxSize()
+            .background(Color(0XF9F9F9))
     ) {
-        TextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        TextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Button(
-            onClick = {
-                if (email.isNotEmpty() && password.isNotEmpty()) {
-                    authViewModel.signup(email, password)
-                } else {
-                    // Show error message for empty fields
-                    authViewModel.clearErrorMessage()
-                    authViewModel.setError("Please enter email and password.")
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Spacer(modifier = Modifier.height(45.dp))
+
+            Text(
+                text = "Sign Up", modifier = Modifier
+                    .fillMaxWidth()
+                    .size(80.dp), fontSize = 40.sp, fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            TextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Name") },
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.White,
+                    cursorColor = Color.Black, unfocusedContainerColor = Color.White
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(10.dp))
+                    .border(
+                        width = 1.dp,
+                        color = Color.LightGray,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+
+
+            TextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email") },
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.White,
+                    cursorColor = Color.Black, unfocusedContainerColor = Color.White
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(10.dp))
+                    .border(
+                        width = 1.dp,
+                        color = Color.LightGray,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            TextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
+                visualTransformation = PasswordVisualTransformation(),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.White,
+                    cursorColor = Color.Black, unfocusedContainerColor = Color.White
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(10.dp))
+                    .border(
+                        width = 1.dp,
+                        color = Color.LightGray,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+
+            TextField(
+                value = passwordCheck,
+                onValueChange = { passwordCheck = it },
+                label = { Text("Password") },
+                visualTransformation = PasswordVisualTransformation(),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.White,
+                    cursorColor = Color.Black, unfocusedContainerColor = Color.White
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(10.dp))
+                    .border(
+                        width = 1.dp,
+                        color = Color.LightGray,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            TextButton(onClick = { navController.navigate("login") }, modifier = Modifier.padding(start = 170.dp)) {
+                Text("Already have an account? Login", maxLines = 1, color = Color.Black)
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Button(
+                onClick = {
+                    if (email.isNotEmpty() && password.isNotEmpty()) {
+                        authViewModel.signup(email, password)
+                    } else {
+                        // Show error message for empty fields
+                        authViewModel.clearErrorMessage()
+                        authViewModel.setError("Please enter email and password.")
+                    }
+                }, modifier=Modifier.fillMaxWidth()
+                    .height(50.dp),
+
+
+                ) {
+                Text("Sign Up")
+            }
+            Spacer(modifier = Modifier.height(90.dp))
+            Text(
+                text = "Or login with social account",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold
+            )
+            Spacer(modifier = Modifier.height(15.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .size(100.dp, 80.dp)
+                        .shadow(2.dp, shape = RoundedCornerShape(10.dp))
+                        .border(3.dp, color = Color.White, shape = RoundedCornerShape(10.dp)),
+
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        Color.White
+                    )
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.googleicon),
+                        contentDescription = "googleicon",
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .size(100.dp, 80.dp)
+                        .shadow(2.dp, shape = RoundedCornerShape(10.dp))
+                        .border(3.dp, color = Color.White, shape = RoundedCornerShape(10.dp)),
+
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        Color.White
+                    )
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.facebookicon),
+                        contentDescription = "googleicon",
+                        modifier = Modifier.size(30.dp)
+                    )
                 }
             }
-        ) {
-            Text("Sign Up")
-        }
-        TextButton(onClick = { navController.navigate("login") }) {
-            Text("Already have an account? Login")
+
+
+            errorMessage?.let {
+                Text(text = it, color = Color.Red)
+            }
         }
 
-        errorMessage?.let {
-            Text(text = it, color = Color.Red)
-        }
+
     }
+
 }
