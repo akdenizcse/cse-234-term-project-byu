@@ -1,5 +1,6 @@
 package com.example.sellstuff
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -8,8 +9,11 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
@@ -23,19 +27,38 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
         authViewModel.clearErrorMessage()
     }
 
-    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Spacer(modifier = Modifier.height(40.dp))
+        Text(
+            text = "Login", modifier = Modifier
+                .fillMaxWidth()
+                .size(80.dp), fontSize = 50.sp, fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(40.dp))
         TextField(
             value = email,
             onValueChange = { email = it },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(modifier = Modifier.height(10.dp))
         TextField(
             value = password,
             onValueChange = { password = it },
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            text = "Forgot your password?",
+            modifier = Modifier.padding(start = 180.dp).clickable {  },
+            maxLines = 1,
+            fontWeight = FontWeight.Bold
         )
         Button(
             onClick = {
@@ -44,7 +67,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
                 } else {
                     // Show error message for empty fields
                     authViewModel.clearErrorMessage()
-                    authViewModel.setError( "Please enter email and password.")
+                    authViewModel.setError("Please enter email and password.")
                 }
             }
         ) {
@@ -71,7 +94,11 @@ fun SignupScreen(navController: NavController, authViewModel: AuthViewModel) {
         authViewModel.clearErrorMessage()
     }
 
-    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
         TextField(
             value = email,
             onValueChange = { email = it },
