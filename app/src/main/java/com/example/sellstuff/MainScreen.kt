@@ -17,22 +17,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
-
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = viewModel()
-    val messagingViewModel: MessagingViewModel = viewModel()
+    val repository = remember { FirestoreRepository() }
+    val conversationViewModel: ConversationViewModel = viewModel(
+        factory = ConversationViewModelFactory(repository)
+    )
     val user by authViewModel.user.collectAsState()
 
     if (user == null) {
         AuthNavHost(navController = navController, authViewModel = authViewModel)
     } else {
-        AppNavHost(navController = navController, authViewModel = authViewModel, messagingViewModel = messagingViewModel)
+        AppNavHost(navController = navController, authViewModel = authViewModel, conversationViewModel = conversationViewModel)
     }
 }
 
@@ -45,7 +50,7 @@ fun AuthNavHost(navController: NavHostController, authViewModel: AuthViewModel) 
 }
 
 @Composable
-fun AppNavHost(navController: NavHostController, authViewModel: AuthViewModel, messagingViewModel: MessagingViewModel) {
+fun AppNavHost(navController: NavHostController, authViewModel: AuthViewModel, conversationViewModel: ConversationViewModel) {
     Scaffold(
         bottomBar = { BottomNavigationBar(navController) }
     ) { innerPadding ->
@@ -55,9 +60,9 @@ fun AppNavHost(navController: NavHostController, authViewModel: AuthViewModel, m
             modifier = Modifier.padding(innerPadding)
         ) {
             composable("home") { HomeScreen() }
-            composable("messages") { MessagingScreen(messagingViewModel) }
-            composable("add") { FirestoreExample()}
-            composable("history") { HistoryScreen()}
+            composable("messages") { ConversationScreen(conversationViewModel) }
+            composable("add") { FirestoreExample() }
+            composable("history") { HistoryScreen() }
             composable("profile") { ProfileScreen(authViewModel) }
         }
     }

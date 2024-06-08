@@ -5,3 +5,8 @@ data class Message(
     val senderId: String = "",
     val timestamp: Long = System.currentTimeMillis()
 )
+
+data class Conversation(
+    val participants: List<String> = emptyList(),
+    val messages: List<Message> = emptyList()
+)
