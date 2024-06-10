@@ -24,7 +24,9 @@ import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.channels.onSuccess
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
@@ -37,7 +39,7 @@ fun ConversationScreen(navController: NavHostController, viewModel: Conversation
     Surface(modifier = Modifier.fillMaxSize()) {
         Column {
             Text(
-                text = "Conversations",
+                text = "Messages",
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(16.dp)
             )
@@ -153,8 +155,22 @@ fun ConversationItem(conversation: Conversation, currentUserId: String, navContr
 fun getTimeAgo(timestamp: Long): String {
     val currentTime = System.currentTimeMillis()
     val timeDifferenceMillis = currentTime - timestamp
-    val hours = timeDifferenceMillis / (1000 * 60 * 60)
-    return "1 h ago"
+
+    val seconds = timeDifferenceMillis / 1000
+    val minutes = seconds / 60
+    val hours = minutes / 60
+    val days = hours / 24
+
+    return when {
+        days > 0 -> {
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val formattedDate = dateFormat.format(Date(timestamp))
+            formattedDate
+        }
+        hours > 0 -> "$hours h ago"
+        minutes > 0 -> "$minutes min ago"
+        else -> "Just now"
+    }
 }
 
 fun getUserEmail(userId: String): Flow<String?> = callbackFlow {

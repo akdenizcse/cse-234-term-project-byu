@@ -1,5 +1,6 @@
 package com.example.sellstuff
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -93,7 +94,7 @@ fun MessagingScreen(
 
 @Composable
 fun MessageItem(message: Message, currentUserId: String) {
-    val isCurrentUser = message.senderId == currentUserId || message.receiverId == currentUserId
+    val isCurrentUser = message.senderId == currentUserId
     val backgroundColor = if (isCurrentUser) Color.Blue else Color.Gray
     val textColor = if (isCurrentUser) Color.White else Color.Black
     val horizontalArrangement = if (isCurrentUser) Arrangement.End else Arrangement.Start

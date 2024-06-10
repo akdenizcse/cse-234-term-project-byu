@@ -2,10 +2,12 @@ package com.example.sellstuff
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class MessagingViewModel : ViewModel() {
@@ -13,7 +15,14 @@ class MessagingViewModel : ViewModel() {
     val messages: StateFlow<List<Message>> get() = _messages
 
     private val db = FirebaseFirestore.getInstance()
-    private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    private var currentUserId: String = ""
+
+    init {
+        // Listen to authentication state changes
+        FirebaseAuth.getInstance().addAuthStateListener { auth ->
+            currentUserId = auth.currentUser?.uid ?: ""
+        }
+    }
 
     fun getMessages(conversationId: String) {
         db.collection("conversations").document(conversationId)
