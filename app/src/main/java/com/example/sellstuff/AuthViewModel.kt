@@ -3,6 +3,7 @@ package com.example.sellstuff
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -35,7 +36,22 @@ class AuthViewModel : ViewModel() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    _user.value = auth.currentUser
+                    val currentUser = auth.currentUser
+                    currentUser?.let {
+                        val userId = it.uid
+                        val userData = hashMapOf(
+                            "email" to email
+                        )
+                        val db = FirebaseFirestore.getInstance()
+                        db.collection("users").document(userId)
+                            .set(userData)
+                            .addOnSuccessListener {
+                                _user.value = currentUser
+                            }
+                            .addOnFailureListener { e ->
+                                _errorMessage.value = "Failed to store user data: ${e.message}"
+                            }
+                    }
                 } else {
                     _errorMessage.value = task.exception?.message ?: "Sign up failed"
                 }
