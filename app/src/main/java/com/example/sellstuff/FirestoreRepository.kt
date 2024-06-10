@@ -16,17 +16,18 @@ class FirestoreRepository {
         val query = conversationsCollection
             .whereArrayContains("participants", userId)
 
-
         val listenerRegistration = query.addSnapshotListener { snapshot, error ->
             if (error != null) {
                 return@addSnapshotListener
             }
 
             val conversations = snapshot?.documents?.map { document ->
+                val id = document.id
                 val participants = document.get("participants") as? List<String> ?: emptyList()
                 val messages = document.get("messages") as? List<HashMap<String, Any>> ?: emptyList()
 
                 Conversation(
+                    id = id,
                     participants = participants,
                     messages = messages.map { it.toMessage() }
                 )
@@ -47,7 +48,8 @@ class FirestoreRepository {
     }
 
     suspend fun createConversation(participants: List<String>) {
-        val conversation = Conversation(participants = participants)
-        conversationsCollection.add(conversation).await()
+        val newDocRef = conversationsCollection.document()
+        val conversation = Conversation(id = newDocRef.id, participants = participants)
+        newDocRef.set(conversation).await()
     }
 }

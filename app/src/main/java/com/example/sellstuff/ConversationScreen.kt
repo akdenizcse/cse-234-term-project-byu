@@ -1,6 +1,5 @@
 package com.example.sellstuff
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,9 +13,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
@@ -24,9 +24,12 @@ import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.channels.onSuccess
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import java.util.Date
+import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 @Composable
-fun ConversationScreen(viewModel: ConversationViewModel) {
+fun ConversationScreen(navController: NavHostController, viewModel: ConversationViewModel = viewModel()) {
     val conversations by viewModel.conversations.collectAsState()
     val currentUser = FirebaseAuth.getInstance().currentUser
     val currentUserId = currentUser?.uid ?: ""
@@ -50,7 +53,7 @@ fun ConversationScreen(viewModel: ConversationViewModel) {
                     }
                 } else {
                     items(conversations) { conversation ->
-                        ConversationItem(conversation, currentUserId)
+                        ConversationItem(conversation, currentUserId, navController)
                     }
                 }
             }
@@ -76,7 +79,7 @@ fun ConversationScreen(viewModel: ConversationViewModel) {
 }
 
 @Composable
-fun ConversationItem(conversation: Conversation, currentUserId: String) {
+fun ConversationItem(conversation: Conversation, currentUserId: String, navController: NavHostController) {
     val participants = conversation.participants.filter { it != currentUserId }
     val lastMessage = conversation.messages.lastOrNull()?.text ?: "No messages yet"
     val timestamp = conversation.messages.lastOrNull()?.timestamp ?: System.currentTimeMillis()
@@ -97,7 +100,9 @@ fun ConversationItem(conversation: Conversation, currentUserId: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* Navigate to detailed conversation screen */ }
+            .clickable {
+                navController.navigate("messaging/${conversation.id}")
+            }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -132,7 +137,7 @@ fun ConversationItem(conversation: Conversation, currentUserId: String) {
             Text(
                 text = lastMessage,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.LightGray,
+                color = Color.DarkGray,
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
@@ -146,13 +151,11 @@ fun ConversationItem(conversation: Conversation, currentUserId: String) {
 }
 
 fun getTimeAgo(timestamp: Long): String {
-    val now = System.currentTimeMillis()
-    val diff = now - timestamp
-    val hours = diff / (1000 * 60 * 60)
-    return "${hours}h ago"
+    val currentTime = System.currentTimeMillis()
+    val timeDifferenceMillis = currentTime - timestamp
+    val hours = timeDifferenceMillis / (1000 * 60 * 60)
+    return "1 h ago"
 }
-
-
 
 fun getUserEmail(userId: String): Flow<String?> = callbackFlow {
     val db = FirebaseFirestore.getInstance()

@@ -7,6 +7,7 @@ data class Message(
 )
 
 data class Conversation(
+    val id: String = "",
     val participants: List<String> = emptyList(),
     val messages: List<Message> = emptyList()
 )
