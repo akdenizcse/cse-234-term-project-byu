@@ -1,9 +1,6 @@
 package com.example.sellstuff
 
 import FirestoreExample
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -13,26 +10,33 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.*
-
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = viewModel()
-    val messagingViewModel: MessagingViewModel = viewModel()
+    val repository = remember { FirestoreRepository() }
+    val conversationViewModel: ConversationViewModel = viewModel(
+        factory = ConversationViewModelFactory(repository)
+    )
     val user by authViewModel.user.collectAsState()
 
     if (user == null) {
         AuthNavHost(navController = navController, authViewModel = authViewModel)
     } else {
-        AppNavHost(navController = navController, authViewModel = authViewModel, messagingViewModel = messagingViewModel)
+        AppNavHost(navController = navController, authViewModel = authViewModel, conversationViewModel = conversationViewModel)
     }
 }
 
@@ -45,7 +49,9 @@ fun AuthNavHost(navController: NavHostController, authViewModel: AuthViewModel) 
 }
 
 @Composable
-fun AppNavHost(navController: NavHostController, authViewModel: AuthViewModel, messagingViewModel: MessagingViewModel) {
+fun AppNavHost(navController: NavHostController, authViewModel: AuthViewModel, conversationViewModel: ConversationViewModel) {
+    val messagingViewModel: MessagingViewModel = viewModel()
+
     Scaffold(
         bottomBar = { BottomNavigationBar(navController) }
     ) { innerPadding ->
@@ -55,13 +61,22 @@ fun AppNavHost(navController: NavHostController, authViewModel: AuthViewModel, m
             modifier = Modifier.padding(innerPadding)
         ) {
             composable("home") { HomeScreen() }
-            composable("messages") { MessagingScreen(messagingViewModel) }
-            composable("add") { FirestoreExample()}
-            composable("history") { HistoryScreen()}
+            composable("messages") { ConversationScreen(navController, conversationViewModel) }
+            composable("add") { FirestoreExample() }
+            composable("history") { HistoryScreen() }
             composable("profile") { ProfileScreen(authViewModel) }
+            composable(
+                "messaging/{conversationId}",
+                arguments = listOf(navArgument("conversationId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val conversationId = backStackEntry.arguments?.getString("conversationId") ?: return@composable
+                MessagingScreen(navController, conversationId = conversationId, messagingViewModel = messagingViewModel)
+            }
         }
     }
 }
+
+
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
@@ -96,4 +111,3 @@ val bottomNavItems = listOf(
     BottomNavItem(title = "History", route = "history", icon = Icons.Default.Done),
     BottomNavItem(title = "Profile", route = "profile", icon = Icons.Default.AccountCircle)
 )
-
