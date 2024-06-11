@@ -58,7 +58,7 @@ dependencies {
     implementation ("androidx.compose.ui:ui:<latest_version>")
     implementation("androidx.compose.ui:ui-tooling:<latest_version>")
     implementation("androidx.navigation:navigation-compose:<latest_version>")
-
+    implementation("io.coil-kt:coil-compose:1.4.0")
 
 
     implementation(libs.androidx.core.ktx)
