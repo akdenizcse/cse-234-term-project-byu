@@ -1,6 +1,7 @@
 package com.example.sellstuff
 
 import FirestoreExample
+import ProfileScreen
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
