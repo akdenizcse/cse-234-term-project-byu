@@ -23,6 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.firebase.auth.FirebaseAuth
+import com.google.gson.Gson
 
 @Composable
 fun MainScreen() {
@@ -50,7 +51,11 @@ fun AuthNavHost(navController: NavHostController, authViewModel: AuthViewModel) 
 }
 
 @Composable
-fun AppNavHost(navController: NavHostController, authViewModel: AuthViewModel, conversationViewModel: ConversationViewModel) {
+fun AppNavHost(
+    navController: NavHostController,
+    authViewModel: AuthViewModel,
+    conversationViewModel: ConversationViewModel
+) {
     val messagingViewModel: MessagingViewModel = viewModel()
 
     Scaffold(
@@ -61,7 +66,7 @@ fun AppNavHost(navController: NavHostController, authViewModel: AuthViewModel, c
             startDestination = "home",
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable("home") { HomeScreen() }
+            composable("home") { HomeScreen(navController) }
             composable("messages") { ConversationScreen(navController, conversationViewModel) }
             composable("add") { FirestoreExample() }
             composable("history") { HistoryScreen() }
@@ -70,8 +75,16 @@ fun AppNavHost(navController: NavHostController, authViewModel: AuthViewModel, c
                 "messaging/{conversationId}",
                 arguments = listOf(navArgument("conversationId") { type = NavType.StringType })
             ) { backStackEntry ->
-                val conversationId = backStackEntry.arguments?.getString("conversationId") ?: return@composable
+                val conversationId =
+                    backStackEntry.arguments?.getString("conversationId") ?: return@composable
                 MessagingScreen(navController, conversationId = conversationId, messagingViewModel = messagingViewModel)
+            }
+            composable(
+                "detail/{item}",
+                arguments = listOf(navArgument("item") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val itemJson = backStackEntry.arguments?.getString("item")
+                DetailScreen(navController = navController, itemJson = itemJson)
             }
         }
     }

@@ -1,7 +1,7 @@
 package com.example.sellstuff
 
+import android.net.Uri
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
@@ -19,18 +20,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
 import kotlinx.coroutines.tasks.await
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavHostController) {
     var items by remember { mutableStateOf(listOf<Item>()) }
     var selectedCategory by remember { mutableStateOf("All") }
 
@@ -46,7 +48,10 @@ fun HomeScreen() {
                 selectedCategory = newCategory
             }
             FilterHeader()
-            ItemList(items = items.filter { it.category == selectedCategory || selectedCategory == "All" })
+            ItemList(items = items.filter { it.category == selectedCategory || selectedCategory == "All" }) { item ->
+                val itemJson = Uri.encode(Gson().toJson(item))
+                navController.navigate("detail/$itemJson")
+            }
         }
     }
 }
@@ -135,7 +140,7 @@ fun Categories(selectedCategory: String, onCategorySelected: (String) -> Unit) {
 }
 
 @Composable
-fun ItemList(items: List<Item>) {
+fun ItemList(items: List<Item>, onItemClick: (Item) -> Unit) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 15.dp, vertical = 16.dp)
     ) {
@@ -143,13 +148,12 @@ fun ItemList(items: List<Item>) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 9.dp), // spacing between rows
-                horizontalArrangement = Arrangement.spacedBy(9.dp) // spacing between items
+                    .padding(bottom = 9.dp),
+                horizontalArrangement = Arrangement.spacedBy(9.dp)
             ) {
                 rowItems.forEach { item ->
-                    ItemCard(item = item, modifier = Modifier.weight(1f))
+                    ItemCard(item = item, modifier = Modifier.weight(1f).clickable { onItemClick(item) })
                 }
-                // Fill space for single item in last row
                 if (rowItems.size < 2) {
                     Spacer(modifier = Modifier.weight(1f))
                 }
@@ -221,7 +225,6 @@ fun ItemCard(item: Item, modifier: Modifier = Modifier) {
         }
     }
 }
-
 
 data class Item(
     val title: String = "",
