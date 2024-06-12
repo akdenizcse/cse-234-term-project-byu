@@ -1,10 +1,9 @@
-import android.app.Activity
-import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -23,20 +22,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import coil.compose.rememberImagePainter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import androidx.compose.foundation.Image
-import coil.compose.rememberImagePainter
+import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import java.util.*
 
 @Composable
 fun FirestoreExample() {
     var inputText by remember { mutableStateOf(TextFieldValue()) }
     val db = FirebaseFirestore.getInstance()
+    val storage = FirebaseStorage.getInstance()
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     var inputText2 by remember { mutableStateOf(TextFieldValue()) }
     var inputText3 by remember { mutableStateOf(TextFieldValue()) }
-    var selectedImages by remember { mutableStateOf(listOf<String>()) }
+    var selectedImages by remember { mutableStateOf(listOf<Uri>()) }
     val auth = FirebaseAuth.getInstance()
     val currentUser = auth.currentUser
     val ownerID = currentUser?.uid
@@ -45,7 +48,7 @@ fun FirestoreExample() {
         contract = ActivityResultContracts.GetMultipleContents(),
         onResult = { uriList ->
             if (uriList.isNotEmpty()) {
-                selectedImages = uriList.map { it.toString() }
+                selectedImages = uriList
             } else {
                 Toast.makeText(context, "No images selected", Toast.LENGTH_SHORT).show()
             }
@@ -149,7 +152,7 @@ fun FirestoreExample() {
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            selectedImages.forEach { uriString ->
+            selectedImages.forEach { uri ->
                 Box(
                     modifier = Modifier
                         .height(180.dp)
@@ -157,7 +160,6 @@ fun FirestoreExample() {
                         .background(Color.LightGray),
                     contentAlignment = Alignment.Center
                 ) {
-                    val uri = uriString.toUri()
                     Image(
                         painter = rememberImagePainter(uri),
                         contentDescription = null,
@@ -184,6 +186,8 @@ fun FirestoreExample() {
 
         Spacer(modifier = Modifier.height(50.dp))
 
+        val coroutineScope = rememberCoroutineScope()
+
         Button(
             modifier = Modifier
                 .fillMaxWidth()
@@ -191,22 +195,31 @@ fun FirestoreExample() {
             onClick = {
                 focusManager.clearFocus()
                 if (ownerID != null) {
-                    val productData = hashMapOf(
-                        "title" to inputText.text,
-                        "description" to inputText2.text,
-                        "price" to inputText3.text,
-                        "images" to selectedImages,
-                        "ownerID" to ownerID,
-                        "category" to selectedCategory
-                    )
-                    db.collection("products")
-                        .add(productData)
-                        .addOnSuccessListener {
-                            Toast.makeText(context, "Product uploaded successfully", Toast.LENGTH_SHORT).show()
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(context, "Failed to upload product", Toast.LENGTH_SHORT).show()
-                        }
+                    coroutineScope.launch {
+                        val imageUrls = uploadImagesToStorage(selectedImages, storage)
+                        val productData = hashMapOf(
+                            "title" to inputText.text,
+                            "description" to inputText2.text,
+                            "price" to inputText3.text,
+                            "images" to imageUrls,
+                            "ownerID" to ownerID,
+                            "category" to selectedCategory
+                        )
+                        db.collection("products")
+                            .add(productData)
+                            .addOnSuccessListener {
+                                // Clear the fields
+                                inputText = TextFieldValue()
+                                inputText2 = TextFieldValue()
+                                inputText3 = TextFieldValue()
+                                selectedImages = listOf()
+                                selectedCategory = ""
+                                Toast.makeText(context, "Product uploaded successfully", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(context, "Failed to upload product", Toast.LENGTH_SHORT).show()
+                            }
+                    }
                 } else {
                     Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show()
                 }
@@ -215,6 +228,17 @@ fun FirestoreExample() {
             Text("Upload")
         }
     }
+}
+
+private suspend fun uploadImagesToStorage(selectedImages: List<Uri>, storage: FirebaseStorage): List<String> {
+    val imageUrls = mutableListOf<String>()
+    for (uri in selectedImages) {
+        val storageRef = storage.reference.child("images/${UUID.randomUUID()}")
+        val uploadTask = storageRef.putFile(uri).await()
+        val downloadUrl = uploadTask.storage.downloadUrl.await()
+        imageUrls.add(downloadUrl.toString())
+    }
+    return imageUrls
 }
 
 enum class categoriez(val value: String) {
