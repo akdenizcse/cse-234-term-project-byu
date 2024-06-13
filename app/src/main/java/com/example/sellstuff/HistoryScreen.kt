@@ -87,7 +87,7 @@ fun HistoryScreen(navController: NavHostController) {
 @Composable
 fun TopAppBar2() {
     androidx.compose.material.TopAppBar(
-        title = { Text(text = "History") },
+        title = { Text(text = "Search in History") },
         backgroundColor = Color.White,
         actions = {
             IconButton(onClick = { /* TODO */ }) {
@@ -253,6 +253,9 @@ fun SalesPurchases(selectedCategory: String, onCategorySelected: (String) -> Uni
                     .padding(horizontal = 8.dp)
                     .clickable { onCategorySelected(category) }
             )
+            if (category != categories.last()) {
+                Spacer(modifier = Modifier.width(32.dp))
+            }
         }
     }
     Spacer(modifier = Modifier.height(16.dp))
