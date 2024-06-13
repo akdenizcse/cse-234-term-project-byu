@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.List
@@ -59,7 +60,7 @@ import com.google.gson.Gson
 fun HistoryScreen(navController: NavHostController) {
 
     var items by remember { mutableStateOf(listOf<Item>()) }
-    var selectedCategory by remember { mutableStateOf("All") }
+    var selectedCategory by remember { mutableStateOf("Sales") }
 
     LaunchedEffect(Unit) {
         items = fetchItemsFromFirestore()
@@ -73,7 +74,7 @@ fun HistoryScreen(navController: NavHostController) {
                 selectedCategory = newCategory
             }
             FilterHeader2()
-            ItemList2(items = items.filter { it.category == selectedCategory || selectedCategory == "All" }) { item ->
+            ItemList2(items = items.filter { it.category == selectedCategory || selectedCategory == "Sales" }) { item ->
                 val itemJson = Uri.encode(Gson().toJson(item))
                 navController.navigate("detail/$itemJson")
             }
@@ -147,64 +148,82 @@ fun FilterHeader2() {
 
 @Composable
 fun ItemCard2(item: Item, modifier: Modifier = Modifier) {
-    Card(
+    Box(
         modifier = modifier
             .padding(8.dp)
             .heightIn(min = 250.dp)
     ) {
-        Column(
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.SpaceBetween
+        Card(
+            modifier = Modifier.fillMaxSize()
         ) {
-            if (item.images.isNotEmpty()) {
-                Image(
-                    painter = rememberImagePainter(item.images[0]),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f),
-                    contentScale = ContentScale.Crop
-                )
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = item.title,
-                modifier = Modifier.padding(horizontal = 8.dp),
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        Icons.Default.LocationOn,
+                if (item.images.isNotEmpty()) {
+                    Image(
+                        painter = rememberImagePainter(item.images[0]),
                         contentDescription = null,
-                        modifier = Modifier.size(12.dp),
-                        tint = Color.Gray
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "5 km",
-                        color = Color.Gray,
-                        fontSize = 12.sp
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f),
+                        contentScale = ContentScale.Crop
                     )
                 }
+                Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "$${item.price}",
-                    color = Color.Black,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    text = item.title,
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
+                Spacer(modifier = Modifier.height(10.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            Icons.Default.LocationOn,
+                            contentDescription = null,
+                            modifier = Modifier.size(12.dp),
+                            tint = Color.Gray
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "5 km",
+                            color = Color.Gray,
+                            fontSize = 12.sp
+                        )
+                    }
+                    Text(
+                        text = "$${item.price}",
+                        color = Color.Black,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
+        }
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(8.dp)
+                .background(Color.Green.copy(alpha = 0.6f), shape = RoundedCornerShape(8.dp))
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+        ) {
+            Text(
+                text = "Purchased",
+                color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
