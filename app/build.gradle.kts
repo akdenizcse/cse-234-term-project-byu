@@ -61,7 +61,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:1.4.0")
     implementation("com.google.firebase:firebase-storage-ktx:20.0.0")
     implementation("com.google.firebase:firebase-firestore-ktx:24.0.0")
-    implementation("com.google.code.gson:gson:2.8.8")
+    implementation("com.google.code.gson:gson:2.10.1")
 
 
     implementation(libs.androidx.core.ktx)

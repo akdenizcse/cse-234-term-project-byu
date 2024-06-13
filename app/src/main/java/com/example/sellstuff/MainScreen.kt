@@ -69,7 +69,7 @@ fun AppNavHost(
             composable("home") { HomeScreen(navController) }
             composable("messages") { ConversationScreen(navController, conversationViewModel) }
             composable("add") { FirestoreExample() }
-            composable("history") { HistoryScreen() }
+            composable("history") { HistoryScreen(navController) }
             composable("profile") { ProfileScreen(authViewModel) }
             composable(
                 "messaging/{conversationId}",
