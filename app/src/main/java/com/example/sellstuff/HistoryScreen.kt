@@ -283,7 +283,7 @@ fun SalesPurchases(selectedCategory: String, onCategorySelected: (String) -> Uni
 suspend fun fetchItemsFromFirestore2(): List<Item> {
     val db = FirebaseFirestore.getInstance()
     return try {
-        val snapshot = db.collection("items")
+        val snapshot = db.collection("products")
             .whereEqualTo("isSaled", true)
             .get()
             .await()
