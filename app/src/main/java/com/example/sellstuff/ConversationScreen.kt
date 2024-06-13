@@ -31,10 +31,20 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
 @Composable
-fun ConversationScreen(navController: NavHostController, viewModel: ConversationViewModel = viewModel()) {
+fun ConversationScreen(navController: NavHostController, email: String, viewModel: ConversationViewModel = viewModel()) {
     val conversations by viewModel.conversations.collectAsState()
     val currentUser = FirebaseAuth.getInstance().currentUser
     val currentUserId = currentUser?.uid ?: ""
+    var isConversationCreated by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        if (email.isNotEmpty() && !isConversationCreated) {
+            val newParticipants = listOf(currentUserId, email)
+            viewModel.createConversation(newParticipants)
+            isConversationCreated = true
+        }
+    }
+
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column {
@@ -44,33 +54,23 @@ fun ConversationScreen(navController: NavHostController, viewModel: Conversation
                 modifier = Modifier.padding(16.dp)
             )
 
-            LazyColumn {
-                if (conversations.isEmpty()) {
-                    item {
-                        Text(
-                            text = "No conversations found.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                } else {
-                    items(conversations) { conversation ->
-                        ConversationItem(conversation, currentUserId, navController)
+                LazyColumn {
+                    if (conversations.isEmpty()) {
+                        item {
+                            Text(
+                                text = "No conversations found.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                    } else {
+                        items(conversations) { conversation ->
+                            ConversationItem(conversation, currentUserId, navController)
+                        }
                     }
                 }
-            }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = {
-                    val newParticipants = listOf(currentUserId, "M5d1mx9mKiQO8ZbdXTuiuIM7OHF2") // Current user and hardcoded user
-                    viewModel.createConversation(newParticipants)
-                },
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text("Create New Conversation")
-            }
         }
     }
 

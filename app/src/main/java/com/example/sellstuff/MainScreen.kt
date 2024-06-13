@@ -67,7 +67,7 @@ fun AppNavHost(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable("home") { HomeScreen(navController) }
-            composable("messages") { ConversationScreen(navController, conversationViewModel) }
+            composable("messages") { ConversationScreen(navController, "", conversationViewModel) }
             composable("add") { FirestoreExample() }
             composable("history") { HistoryScreen(navController) }
             composable("profile") { ProfileScreen(authViewModel) }
@@ -86,9 +86,17 @@ fun AppNavHost(
                 val itemJson = backStackEntry.arguments?.getString("item")
                 DetailScreen(navController = navController, itemJson = itemJson)
             }
+            composable(
+                "conversation/{email}",
+                arguments = listOf(navArgument("email") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val email = backStackEntry.arguments?.getString("email") ?: return@composable
+                ConversationScreen(navController, email, conversationViewModel)
+            }
         }
     }
 }
+
 
 
 

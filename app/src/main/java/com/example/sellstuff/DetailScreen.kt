@@ -142,7 +142,10 @@ fun DetailScreen(navController: NavHostController, itemJson: String?) {
                             color = Color.Gray,
                             fontWeight = FontWeight.Bold
                         )
-                        IconButton(onClick = { /* TODO: Handle button click */ }) {
+                        IconButton(onClick = {
+                            // Navigate to ConversationScreen
+                            navController.navigate("conversation/M5d1mx9mKiQO8ZbdXTuiuIM7OHF2")
+                        }) {
                             Icon(
                                 imageVector = Icons.Default.Send,
                                 tint = Color.Gray,
