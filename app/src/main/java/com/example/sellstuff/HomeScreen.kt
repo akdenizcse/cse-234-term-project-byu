@@ -227,6 +227,7 @@ fun ItemCard(item: Item, modifier: Modifier = Modifier) {
 }
 
 data class Item(
+    val id: String = "",
     val title: String = "",
     val description: String = "",
     val price: String = "",
@@ -241,7 +242,7 @@ suspend fun fetchItemsFromFirestore(): List<Item> {
         val db = FirebaseFirestore.getInstance()
         val result = db.collection("products").get().await()
         result.documents.mapNotNull { document ->
-            document.toObject(Item::class.java)
+            document.toObject(Item::class.java)?.copy(id = document.id)
         }
     } catch (e: Exception) {
         emptyList()
