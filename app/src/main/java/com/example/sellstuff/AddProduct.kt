@@ -203,7 +203,8 @@ fun FirestoreExample() {
                             "price" to inputText3.text,
                             "images" to imageUrls,
                             "ownerID" to ownerID,
-                            "category" to selectedCategory
+                            "category" to selectedCategory,
+                            "isSaled" to false
                         )
                         db.collection("products")
                             .add(productData)
@@ -255,11 +256,6 @@ fun getAllCategoriez(): List<categoriez> {
     return listOf(
         categoriez.HOME, categoriez.CLOTHES, categoriez.TECH, categoriez.TOYS, categoriez.ACCESSORIES, categoriez.COSMETIC, categoriez.OTHER
     )
-}
-
-fun getCategoriez(value: String): categoriez? {
-    val map = categoriez.values().associateBy(categoriez::value)
-    return map[value]
 }
 
 @Composable

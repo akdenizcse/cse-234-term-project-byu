@@ -63,7 +63,7 @@ fun HistoryScreen(navController: NavHostController) {
     var selectedCategory by remember { mutableStateOf("Sales") }
 
     LaunchedEffect(Unit) {
-        items = fetchItemsFromFirestore()
+        items = fetchItemsFromFirestore2()
     }
 
     Scaffold(
@@ -280,23 +280,14 @@ fun SalesPurchases(selectedCategory: String, onCategorySelected: (String) -> Uni
     Spacer(modifier = Modifier.height(16.dp))
 }
 
-
-data class Item2(
-    val title: String = "",
-    val description: String = "",
-    val price: String = "",
-    val images: List<String> = emptyList(),
-    val ownerID: String = "",
-    val category: String = ""
-)
-
 suspend fun fetchItemsFromFirestore2(): List<Item> {
+    val db = FirebaseFirestore.getInstance()
     return try {
-        val db = FirebaseFirestore.getInstance()
-        val result = db.collection("products").get().await()
-        result.documents.mapNotNull { document ->
-            document.toObject(Item::class.java)
-        }
+        val snapshot = db.collection("items")
+            .whereEqualTo("isSaled", true)
+            .get()
+            .await()
+        snapshot.toObjects(Item::class.java)
     } catch (e: Exception) {
         emptyList()
     }

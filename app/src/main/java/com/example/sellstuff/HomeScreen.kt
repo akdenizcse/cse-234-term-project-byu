@@ -232,7 +232,8 @@ data class Item(
     val price: String = "",
     val images: List<String> = emptyList(),
     val ownerID: String = "",
-    val category: String = ""
+    val category: String = "",
+    val isSaled: Boolean = false
 )
 
 suspend fun fetchItemsFromFirestore(): List<Item> {
