@@ -35,20 +35,34 @@ import kotlinx.coroutines.tasks.await
 fun HomeScreen(navController: NavHostController) {
     var items by remember { mutableStateOf(listOf<Item>()) }
     var selectedCategory by remember { mutableStateOf("All") }
+    var searchQuery by remember { mutableStateOf("") }
+    var isSearchActive by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         items = fetchItemsFromFirestore()
     }
 
     Scaffold(
-        topBar = { TopAppBar() }
+        topBar = {
+            TopAppBar(
+                searchQuery = searchQuery,
+                onSearchQueryChanged = { newQuery -> searchQuery = newQuery },
+                isSearchActive = isSearchActive,
+                onSearchIconClick = { isSearchActive = !isSearchActive }
+            )
+        }
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             Categories(selectedCategory) { newCategory ->
                 selectedCategory = newCategory
             }
             FilterHeader()
-            ItemList(items = items.filter { it.category == selectedCategory || selectedCategory == "All" }) { item ->
+            ItemList(
+                items = items.filter {
+                    (it.category == selectedCategory || selectedCategory == "All") &&
+                            it.title.contains(searchQuery, ignoreCase = true)
+                }
+            ) { item ->
                 val itemJson = Uri.encode(Gson().toJson(item))
                 navController.navigate("detail/$itemJson")
             }
@@ -57,18 +71,46 @@ fun HomeScreen(navController: NavHostController) {
 }
 
 @Composable
-fun TopAppBar() {
+fun TopAppBar(
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+    isSearchActive: Boolean,
+    onSearchIconClick: () -> Unit
+) {
     androidx.compose.material.TopAppBar(
-        title = { Text(text = "SellStuff") },
+        title = {
+            if (isSearchActive) {
+                TextField(
+                    value = searchQuery,
+                    onValueChange = onSearchQueryChanged,
+                    placeholder = { Text("Search...") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    maxLines = 1,
+                )
+            } else {
+                Text(text = "SellStuff")
+            }
+        },
         backgroundColor = Color.White,
         actions = {
-            IconButton(onClick = { /* TODO */ }) {
+            IconButton(onClick = onSearchIconClick) {
                 Icon(
                     Icons.Default.Search,
                     contentDescription = null
                 )
             }
-        }
+        },
+        navigationIcon = if (isSearchActive) {
+            {
+                IconButton(onClick = onSearchIconClick) {
+                    Icon(
+                        Icons.Default.ArrowBack,
+                        contentDescription = null
+                    )
+                }
+            }
+        } else null
     )
 }
 
