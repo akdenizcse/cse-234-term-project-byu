@@ -219,7 +219,7 @@ fun ItemCard2(item: Item, modifier: Modifier = Modifier) {
                 .padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             Text(
-                text = "Purchased",
+                text = "On Sale",
                 color = Color.White,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
