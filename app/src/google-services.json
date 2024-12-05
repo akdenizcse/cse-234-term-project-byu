@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "324804269309",
+    "project_id": "sellstuff-c01b4",
+    "storage_bucket": "sellstuff-c01b4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:324804269309:android:49709ffdbfaae543c3da94",
+        "android_client_info": {
+          "package_name": "com.example.sellstuff"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7gyN1OOYaGRB993YPoH-QEASXHTWO__M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
